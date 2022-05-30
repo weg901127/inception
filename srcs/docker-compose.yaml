@@ -1,0 +1,58 @@
+version: '3'
+services:
+  nginx:
+    image: nginx:v1
+    build:
+      context: ./nginx
+    volumes:
+      - wordpress_files:/var/www/html/wordpress
+    ports:
+      - "443:443"
+    container_name: nginx
+    depends_on:
+      - wordpress
+    restart: always
+    networks:
+      - app-network
+  mariadb:
+    image: mariadb:v1
+    volumes:
+      - db-data:/var/lib/mysql
+    build:
+      context: ./mariadb
+    container_name: mariadb
+    env_file:
+      - ".env"
+    networks:
+      - app-network
+  wordpress:
+    image: wordpress:v1
+    volumes:
+      - wordpress_files:/var/www/html/wordpress
+    restart: always
+    build:
+      context: ./wordpress
+    container_name: wordpress
+    depends_on:
+      - mariadb
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+    db-data:
+        driver: local
+        driver_opts:
+            type: none
+            o: bind
+            device: /Users/gilee/data
+    wordpress_files:
+        driver: local
+        driver_opts:
+            type: none
+            o: bind
+            device: /inception/srcs/wordpress/wordpress_files
+

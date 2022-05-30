@@ -1,0 +1,3 @@
+/srcs/mariadb/data/
+/srcs/nginx/fullchain.pem
+/srcs/nginx/privkey.pem
